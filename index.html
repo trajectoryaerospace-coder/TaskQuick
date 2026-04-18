@@ -12,6 +12,7 @@
   --danger: #ff4757;
   --bg-color: #f5f7fb;
   --text-main: #1e293b;
+  --success: #2ed573;
 }
 
 body {
@@ -32,10 +33,25 @@ canvas {
 .top-nav {
   position: fixed; top: 12px; left: 12px; right: 12px; height: 75px;
   background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
-  border-radius: 22px; display: flex; align-items: center;
+  border-radius: 22px; display: flex; align-items: center; justify-content: space-between;
   padding: 0 30px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 .top-nav b { font-size: 1.6rem; color: #2c5f7a; letter-spacing: -1px; }
+
+.notif-badge {
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.notif-off { background: #fee2e2; color: var(--danger); }
+.notif-on { background: #dcfce7; color: var(--success); }
 
 .add-button {
   position: fixed; bottom: 35px; right: 35px;
@@ -72,7 +88,6 @@ canvas {
 .section-box.active { border-color: var(--primary); background: #fff; box-shadow: 0 10px 30px rgba(74, 159, 214, 0.1); }
 .section-box.disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
 
-/* Calendar */
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
 .day { padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 0.85rem; }
 .day:hover:not(.disabled-day) { background: #e0f2fe; color: var(--primary); }
@@ -81,7 +96,6 @@ canvas {
 .day.disabled-day { color: #cbd5e1; cursor: not-allowed; }
 .day-name { font-size: 0.7rem; color: #94a3b8; font-weight: 800; text-align: center; }
 
-/* Inputs */
 label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
 input, textarea, select { 
     width: 100%; padding: 14px; margin-bottom: 18px; border-radius: 14px; 
@@ -137,6 +151,9 @@ textarea { height: 80px; resize: none; }
 
 <div class="top-nav">
   <div><b>TaskQuick</b> Apex</div>
+  <button id="notifBtn" class="notif-badge notif-off" onclick="requestNotifs()">
+      <span>Notifications: Off</span>
+  </button>
 </div>
 
 <div id="emptyState" class="empty-hint">
@@ -213,6 +230,46 @@ let tasks = [];
 let curMonth = new Date();
 let selDate = null;
 
+// Notification Sound Fallback
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playBeep() {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 1);
+}
+
+// Check Notification Status
+function updateNotifUI() {
+    const btn = document.getElementById("notifBtn");
+    if (!("Notification" in window)) {
+        btn.style.display = "none";
+        return;
+    }
+    if (Notification.permission === "granted") {
+        btn.className = "notif-badge notif-on";
+        btn.innerHTML = "<span>Notifications: On</span>";
+    } else {
+        btn.className = "notif-badge notif-off";
+        btn.innerHTML = "<span>Enable Notifications</span>";
+    }
+}
+
+function requestNotifs() {
+    if (!("Notification" in window)) return alert("Browser does not support notifications.");
+    Notification.requestPermission().then(permission => {
+        updateNotifUI();
+        if(permission === "granted") new Notification("TaskQuick", { body: "Notifications enabled!" });
+    });
+}
+
 // Populate Priority Dropdown
 const ps = document.getElementById("prioSelect");
 for(let i=1; i<=100; i++) {
@@ -220,7 +277,6 @@ for(let i=1; i<=100; i++) {
     ps.appendChild(o);
 }
 
-// Load from LocalStorage
 function loadStorage() {
     const saved = localStorage.getItem('taskquick_tasks');
     if(saved) tasks = JSON.parse(saved);
@@ -252,7 +308,7 @@ function renderCal() {
         dEl.innerText = d;
         if(!isPast) {
             dEl.onclick = () => {
-                selDate = new Date(dObj); // Create fresh instance
+                selDate = new Date(dObj);
                 syncLock();
                 renderCal();
             };
@@ -263,7 +319,6 @@ function renderCal() {
 function changeMonth(dir) { curMonth.setMonth(curMonth.getMonth() + dir); renderCal(); }
 function clearCal() { selDate = null; syncLock(); renderCal(); }
 
-// UI Lock
 function syncLock() {
     const d = parseInt(document.getElementById("in-d").value)||0;
     const h = parseInt(document.getElementById("in-h").value)||0;
@@ -296,7 +351,6 @@ function applyPreset() {
     renderCal();
 }
 
-// Modal Handlers
 function openModal(id = null) {
     document.getElementById("modal").style.display = "block";
     document.getElementById("backdrop").style.display = "block";
@@ -340,7 +394,8 @@ function saveTask() {
     const newTask = {
         id: parseInt(id), title, desc: document.getElementById("desc").value,
         initial: durationSecs, target: Date.now() + (durationSecs * 1000),
-        priority: parseInt(ps.value), loop: document.getElementById("loop").checked
+        priority: parseInt(ps.value), loop: document.getElementById("loop").checked,
+        alerted: false // Track if notification was sent
     };
 
     const idx = tasks.findIndex(x => x.id == id);
@@ -388,6 +443,7 @@ function renderTasks() {
 function resetT(id) {
     const t = tasks.find(x => x.id === id);
     t.target = Date.now() + (t.initial * 1000);
+    t.alerted = false;
     saveStorage(); renderTasks();
 }
 
@@ -400,11 +456,16 @@ function deleteT(id) {
 
 // Update Loop
 setInterval(() => {
-    let triggered = false;
+    let changed = false;
     tasks.forEach(t => {
         const rem = t.target - Date.now();
-        if(rem <= 0 && rem > -1000) { // Triggered this second
-            if("Notification" in window && Notification.permission === "granted") new Notification("Time up: " + t.title);
+        if(rem <= 0 && !t.alerted) { 
+            t.alerted = true;
+            changed = true;
+            playBeep();
+            if("Notification" in window && Notification.permission === "granted") {
+                new Notification("TaskQuick Apex", { body: "Time's up: " + t.title });
+            }
             if(t.loop) setTimeout(() => resetT(t.id), 2000);
         }
     });
@@ -433,6 +494,7 @@ function draw() {
 window.addEventListener("resize", initBg);
 initBg(); draw();
 loadStorage();
+updateNotifUI();
 </script>
 </body>
 </html>
