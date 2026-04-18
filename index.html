@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>TaskQuick - Perpetual Apex</title>
 
 <style>
@@ -21,12 +21,27 @@ body {
   background: var(--bg-color);
   color: var(--text-main);
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 canvas {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   z-index: 0; pointer-events: none;
+}
+
+/* ===== PERMISSION GATE ===== */
+#lockScreen {
+    position: fixed; inset: 0; background: #fff; z-index: 9999;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 40px;
+}
+#lockScreen h1 { color: var(--primary); font-size: 2rem; margin-bottom: 10px; }
+#lockScreen p { color: #64748b; margin-bottom: 30px; line-height: 1.5; }
+.btn-auth { 
+    background: var(--primary); color: white; border: none; padding: 20px 40px; 
+    border-radius: 50px; font-weight: 800; font-size: 1.1rem; cursor: pointer;
+    box-shadow: 0 10px 20px rgba(74, 159, 214, 0.3);
 }
 
 /* ===== NAVIGATION & UI ===== */
@@ -142,13 +157,17 @@ textarea { height: 80px; resize: none; }
 .btn-main { flex: 1; padding: 18px; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; }
 .btn-save { background: var(--primary); color: white; }
 
-.history-item {
-    border-bottom: 1px solid #f1f5f9; padding: 15px 0;
-}
+.history-item { border-bottom: 1px solid #f1f5f9; padding: 15px 0; }
 .history-item:last-child { border-bottom: none; }
 </style>
 </head>
 <body>
+
+<div id="lockScreen">
+    <h1>System Access</h1>
+    <p>To use TaskQuick Apex and receive real-time task alerts,<br>please enable notifications.</p>
+    <button class="btn-auth" onclick="requestAccess()">ENABLE SYSTEM ALERTS</button>
+</div>
 
 <canvas id="bg"></canvas>
 
@@ -244,6 +263,24 @@ let completedTasks = [];
 let curMonth = new Date();
 let selDate = null;
 
+// Initial Permission Check
+window.onload = () => {
+    if (Notification.permission === "granted") {
+        document.getElementById('lockScreen').style.display = 'none';
+    }
+    loadStorage();
+};
+
+async function requestAccess() {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+        document.getElementById('lockScreen').style.display = 'none';
+        new Notification("TaskQuick Apex", { body: "Notifications Enabled Successfully!" });
+    } else {
+        alert("Permission denied. You cannot use the app without enabling notifications.");
+    }
+}
+
 // Populate Priority Dropdown
 const ps = document.getElementById("prioSelect");
 for(let i=1; i<=100; i++) {
@@ -251,7 +288,6 @@ for(let i=1; i<=100; i++) {
     ps.appendChild(o);
 }
 
-// Load from LocalStorage
 function loadStorage() {
     const saved = localStorage.getItem('taskquick_tasks');
     const savedHistory = localStorage.getItem('taskquick_completed');
@@ -297,7 +333,6 @@ function renderCal() {
 function changeMonth(dir) { curMonth.setMonth(curMonth.getMonth() + dir); renderCal(); }
 function clearCal() { selDate = null; syncLock(); renderCal(); }
 
-// UI Lock
 function syncLock() {
     const d = parseInt(document.getElementById("in-d").value)||0;
     const h = parseInt(document.getElementById("in-h").value)||0;
@@ -330,7 +365,6 @@ function applyPreset() {
     renderCal();
 }
 
-// Modal Handlers
 function openModal(id = null) {
     document.getElementById("modal").style.display = "block";
     document.getElementById("backdrop").style.display = "block";
@@ -398,7 +432,7 @@ function completeT(id) {
     if(idx > -1) {
         const task = tasks.splice(idx, 1)[0];
         task.completedAt = new Date().toLocaleString();
-        completedTasks.unshift(task); // Add to top of history
+        completedTasks.unshift(task);
         saveStorage();
         renderTasks();
     }
@@ -485,11 +519,21 @@ function deleteT(id) {
 
 // Update Loop
 setInterval(() => {
+    let changed = false;
     tasks.forEach(t => {
         const rem = t.target - Date.now();
+        // Check for transition to 0
         if(rem <= 0 && rem > -1000) { 
-            if("Notification" in window && Notification.permission === "granted") new Notification("Time up: " + t.title);
-            if(t.loop) setTimeout(() => resetT(t.id), 2000);
+            // Fire Notification
+            if (Notification.permission === "granted") {
+                new Notification("Task Completed: " + t.title, {
+                    body: t.desc || "Timer has reached zero.",
+                    icon: "https://cdn-icons-png.flaticon.com/512/1001/1001371.png"
+                });
+            }
+            if(t.loop) {
+                setTimeout(() => resetT(t.id), 2000);
+            }
         }
     });
     if(tasks.length) renderTasks();
@@ -516,7 +560,6 @@ function draw() {
 }
 window.addEventListener("resize", initBg);
 initBg(); draw();
-loadStorage();
 </script>
 </body>
 </html>
