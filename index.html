@@ -7,79 +7,79 @@
 
 <style>
 :root {
-  --primary: #4a9fd6;
-  --primary-light: #7ed3ff;
-  --danger: #ff4757;
-  --success: #2ed573;
-  --bg-color: #f5f7fb;
-  --text-main: #1e293b;
+  --primary: #4a9fd6;
+  --primary-light: #7ed3ff;
+  --danger: #ff4757;
+  --success: #2ed573;
+  --bg-color: #f5f7fb;
+  --text-main: #1e293b;
 }
 
 body {
-  margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--bg-color);
-  color: var(--text-main);
-  overflow-x: hidden;
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-main);
+  overflow-x: hidden;
 }
 
 canvas {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
 }
 
 /* ===== NAVIGATION & UI ===== */
 .top-nav {
-  position: fixed; top: 12px; left: 12px; right: 12px; height: 75px;
-  background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
-  border-radius: 22px; display: flex; align-items: center;
-  padding: 0 30px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  position: fixed; top: 12px; left: 12px; right: 12px; height: 75px;
+  background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
+  border-radius: 22px; display: flex; align-items: center;
+  padding: 0 30px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 .top-nav b { font-size: 1.6rem; color: #2c5f7a; letter-spacing: -1px; }
 
 .add-button {
-  position: fixed; bottom: 35px; right: 35px;
-  width: 75px; height: 75px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  display: flex; justify-content: center; align-items: center;
-  cursor: pointer; z-index: 30; box-shadow: 0 12px 30px rgba(74, 159, 214, 0.4);
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: fixed; bottom: 35px; right: 35px;
+  width: 75px; height: 75px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer; z-index: 30; box-shadow: 0 12px 30px rgba(74, 159, 214, 0.4);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .add-button svg { width: 36px; height: 36px; fill: white; }
 .add-button:hover { transform: scale(1.1) rotate(90deg); }
 
 .history-button {
-  position: fixed; bottom: 35px; left: 35px;
-  width: 75px; height: 75px; border-radius: 50%;
-  background: white; border: 2px solid #e2e8f0;
-  display: flex; justify-content: center; align-items: center;
-  cursor: pointer; z-index: 30; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  transition: 0.25s;
+  position: fixed; bottom: 35px; left: 35px;
+  width: 75px; height: 75px; border-radius: 50%;
+  background: white; border: 2px solid #e2e8f0;
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer; z-index: 30; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: 0.25s;
 }
 .history-button:hover { transform: scale(1.1); background: #f8fafc; }
 .history-button svg { width: 32px; height: 32px; fill: #64748b; }
 
 .empty-hint {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; color: #cbd5e1; z-index: 5; pointer-events: none;
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  text-align: center; color: #cbd5e1; z-index: 5; pointer-events: none;
 }
 
 /* ===== MODAL ===== */
 #backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(12px); display: none; z-index: 50;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px); display: none; z-index: 50;
 }
 .modal {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 92vw; max-width: 600px; max-height: 88vh; overflow-y: auto;
-  background: white; border-radius: 35px; padding: 35px; display: none; z-index: 100;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 92vw; max-width: 600px; max-height: 88vh; overflow-y: auto;
+  background: white; border-radius: 35px; padding: 35px; display: none; z-index: 100;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.3);
 }
 
 .section-box {
-    padding: 20px; border-radius: 24px; border: 2px solid transparent;
-    background: #f8fafc; margin-bottom: 20px; transition: 0.3s;
+    padding: 20px; border-radius: 24px; border: 2px solid transparent;
+    background: #f8fafc; margin-bottom: 20px; transition: 0.3s;
 }
 .section-box.active { border-color: var(--primary); background: #fff; box-shadow: 0 10px 30px rgba(74, 159, 214, 0.1); }
 .section-box.disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
@@ -95,9 +95,9 @@ canvas {
 
 /* Inputs */
 label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-input, textarea, select { 
-    width: 100%; padding: 14px; margin-bottom: 18px; border-radius: 14px; 
-    border: 1px solid #e2e8f0; background: #fcfdfe; font-size: 14px; box-sizing: border-box; 
+input, textarea, select { 
+    width: 100%; padding: 14px; margin-bottom: 18px; border-radius: 14px; 
+    border: 1px solid #e2e8f0; background: #fcfdfe; font-size: 14px; box-sizing: border-box; 
 }
 textarea { height: 80px; resize: none; }
 
@@ -108,34 +108,34 @@ textarea { height: 80px; resize: none; }
 
 /* ===== CARDS & ALERT ===== */
 #taskList {
-  position: fixed; top: 115px; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 800px; padding: 0 20px 150px;
-  display: flex; flex-direction: column; gap: 20px; z-index: 10;
-  overflow-y: auto; height: calc(100vh - 130px);
+  position: fixed; top: 115px; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 800px; padding: 0 20px 150px;
+  display: flex; flex-direction: column; gap: 20px; z-index: 10;
+  overflow-y: auto; height: calc(100vh - 130px);
 }
 .task-card {
-  position: relative; background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
-  border-radius: 28px; padding: 28px; border-left: 12px solid var(--primary);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  position: relative; background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
+  border-radius: 28px; padding: 28px; border-left: 12px solid var(--primary);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
 }
 
 .alert-overlay {
-  position: absolute; inset: 0; background: rgba(255, 71, 87, 0.98);
-  border-radius: 24px; display: none; flex-direction: column;
-  justify-content: center; align-items: center; z-index: 10;
-  color: white; text-align: center; animation: alertPulse 1.5s infinite;
+  position: absolute; inset: 0; background: rgba(255, 71, 87, 0.98);
+  border-radius: 24px; display: none; flex-direction: column;
+  justify-content: center; align-items: center; z-index: 10;
+  color: white; text-align: center; animation: alertPulse 1.5s infinite;
 }
 @keyframes alertPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 
 .alert-overlay h1 { font-size: 2.2rem; margin: 0; font-weight: 900; letter-spacing: 2px; }
-.alert-overlay button { 
-    margin-top: 15px; padding: 12px 35px; border-radius: 50px; 
-    border: none; background: white; color: var(--danger); font-weight: 900; cursor: pointer;
+.alert-overlay button { 
+    margin-top: 15px; padding: 12px 35px; border-radius: 50px; 
+    border: none; background: white; color: var(--danger); font-weight: 900; cursor: pointer;
 }
 
 .countdown-pill {
-    background: #f1f5f9; padding: 8px 15px; border-radius: 12px;
-    font-family: 'Courier New', monospace; font-weight: 800; color: #1e293b;
+    background: #f1f5f9; padding: 8px 15px; border-radius: 12px;
+    font-family: 'Courier New', monospace; font-weight: 800; color: #1e293b;
 }
 
 .btn-row { display: flex; gap: 12px; margin-top: 15px; }
@@ -143,7 +143,7 @@ textarea { height: 80px; resize: none; }
 .btn-save { background: var(--primary); color: white; }
 
 .history-item {
-    border-bottom: 1px solid #f1f5f9; padding: 15px 0;
+    border-bottom: 1px solid #f1f5f9; padding: 15px 0;
 }
 .history-item:last-child { border-bottom: none; }
 </style>
@@ -153,89 +153,89 @@ textarea { height: 80px; resize: none; }
 <canvas id="bg"></canvas>
 
 <div class="top-nav">
-  <div><b>TaskQuick</b> Apex</div>
+  <div><b>TaskQuick</b> Apex</div>
 </div>
 
 <div id="emptyState" class="empty-hint">
-    <h2>Ready to plan?</h2>
-    <p>Hit the + button to schedule a task</p>
+    <h2>Ready to plan?</h2>
+    <p>Hit the + button to schedule a task</p>
 </div>
 
 <div class="history-button" onclick="openHistory()">
-    <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
 </div>
 
 <div class="add-button" onclick="openModal()">
-    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 </div>
 
 <div id="taskList"></div>
 <div id="backdrop" onclick="closeAllModals()"></div>
 
 <div class="modal" id="modal">
-  <h2 style="margin-top:0">Schedule Task</h2>
-  <input type="hidden" id="editId">
-  
-  <label>Title</label>
-  <input id="title" placeholder="Task Name">
+  <h2 style="margin-top:0">Schedule Task</h2>
+  <input type="hidden" id="editId">
+  
+  <label>Title</label>
+  <input id="title" placeholder="Task Name">
 
-  <label>Description</label>
-  <textarea id="desc" placeholder="Details..."></textarea>
+  <label>Description</label>
+  <textarea id="desc" placeholder="Details..."></textarea>
 
-  <div class="section-box" id="calSection">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label style="margin:0">Option 1: Calendar Date</label>
-          <button onclick="clearCal()" style="font-size:0.6rem; cursor:pointer;">Reset Cal</button>
-      </div>
-      <div style="display:flex; justify-content:space-between; margin-top:15px; align-items:center;">
-          <button onclick="changeMonth(-1)" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">❮</button>
-          <b id="monthYear"></b>
-          <button onclick="changeMonth(1)" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">❯</button>
-      </div>
-      <div class="cal-grid" id="calGrid"></div>
-      <div style="margin-top:15px; display:flex; align-items:center; gap:10px;">
-          <label style="margin:0">At Time:</label>
-          <input type="time" id="calTime" value="12:00" style="margin:0; width:130px;">
-      </div>
-  </div>
+  <div class="section-box" id="calSection">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label style="margin:0">Option 1: Calendar Date</label>
+          <button onclick="clearCal()" style="font-size:0.6rem; cursor:pointer;">Reset Cal</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:15px; align-items:center;">
+          <button onclick="changeMonth(-1)" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">❮</button>
+          <b id="monthYear"></b>
+          <button onclick="changeMonth(1)" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">❯</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div style="margin-top:15px; display:flex; align-items:center; gap:10px;">
+          <label style="margin:0">At Time:</label>
+          <input type="time" id="calTime" value="12:00" style="margin:0; width:130px;">
+      </div>
+  </div>
 
-  <div class="section-box" id="manSection">
-      <label>Option 2: Manual Duration</label>
-      <div class="segmented-time">
-          <div class="time-box"><input type="number" id="in-d" value="0" oninput="syncLock()"><span>DAYS</span></div>
-          <div class="time-box"><input type="number" id="in-h" value="0" oninput="syncLock()"><span>HRS</span></div>
-          <div class="time-box"><input type="number" id="in-m" value="0" oninput="syncLock()"><span>MINS</span></div>
-          <div class="time-box"><input type="number" id="in-s" value="0" oninput="syncLock()"><span>SECS</span></div>
-      </div>
-      <select id="presets" onchange="applyPreset()" style="margin-top:15px; margin-bottom:0;">
-          <option value="">Presets</option>
-          <option value="0:0:1:0">1 Minute</option>
-          <option value="0:0:10:0">10 Minutes</option>
-          <option value="0:1:0:0">1 Hour</option>
-      </select>
-  </div>
+  <div class="section-box" id="manSection">
+      <label>Option 2: Manual Duration</label>
+      <div class="segmented-time">
+          <div class="time-box"><input type="number" id="in-d" value="0" oninput="syncLock()"><span>DAYS</span></div>
+          <div class="time-box"><input type="number" id="in-h" value="0" oninput="syncLock()"><span>HRS</span></div>
+          <div class="time-box"><input type="number" id="in-m" value="0" oninput="syncLock()"><span>MINS</span></div>
+          <div class="time-box"><input type="number" id="in-s" value="0" oninput="syncLock()"><span>SECS</span></div>
+      </div>
+      <select id="presets" onchange="applyPreset()" style="margin-top:15px; margin-bottom:0;">
+          <option value="">Presets</option>
+          <option value="0:0:1:0">1 Minute</option>
+          <option value="0:0:10:0">10 Minutes</option>
+          <option value="0:1:0:0">1 Hour</option>
+      </select>
+  </div>
 
-  <label>Priority (1-100)</label>
-  <select id="prioSelect"></select>
+  <label>Priority (1-100)</label>
+  <select id="prioSelect"></select>
 
-  <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-      <input type="checkbox" id="loop" style="width:20px; height:20px; margin:0; cursor:pointer;">
-      <label for="loop" style="margin:0; cursor:pointer;">Repeat Task Loop</label>
-  </div>
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+      <input type="checkbox" id="loop" style="width:20px; height:20px; margin:0; cursor:pointer;">
+      <label for="loop" style="margin:0; cursor:pointer;">Repeat Task Loop</label>
+  </div>
 
-  <div class="btn-row">
-    <button class="btn-main" style="background:#f1f5f9;" onclick="closeModal()">Cancel</button>
-    <button class="btn-main btn-save" onclick="saveTask()">Save Task</button>
-  </div>
+  <div class="btn-row">
+    <button class="btn-main" style="background:#f1f5f9;" onclick="closeModal()">Cancel</button>
+    <button class="btn-main btn-save" onclick="saveTask()">Save Task</button>
+  </div>
 </div>
 
 <div class="modal" id="historyModal">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="margin:0">Completed Tasks</h2>
-        <button onclick="clearHistory()" style="font-size:0.7rem; border:none; background:#fee2e2; color:var(--danger); padding:5px 10px; border-radius:8px; cursor:pointer;">Clear All</button>
-    </div>
-    <div id="historyList" style="max-height:50vh; overflow-y:auto; margin-bottom:20px;"></div>
-    <button class="btn-main" style="background:#f1f5f9; width:100%;" onclick="closeHistory()">Close</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="margin:0">Completed Tasks</h2>
+        <button onclick="clearHistory()" style="font-size:0.7rem; border:none; background:#fee2e2; color:var(--danger); padding:5px 10px; border-radius:8px; cursor:pointer;">Clear All</button>
+    </div>
+    <div id="historyList" style="max-height:50vh; overflow-y:auto; margin-bottom:20px;"></div>
+    <button class="btn-main" style="background:#f1f5f9; width:100%;" onclick="closeHistory()">Close</button>
 </div>
 
 <script>
@@ -247,117 +247,117 @@ let selDate = null;
 // Populate Priority Dropdown
 const ps = document.getElementById("prioSelect");
 for(let i=1; i<=100; i++) {
-    let o = document.createElement("option"); o.value = i; o.innerText = "Priority " + i;
-    ps.appendChild(o);
+    let o = document.createElement("option"); o.value = i; o.innerText = "Priority " + i;
+    ps.appendChild(o);
 }
 
 // Load from LocalStorage
 function loadStorage() {
-    const saved = localStorage.getItem('taskquick_tasks');
-    const savedHistory = localStorage.getItem('taskquick_completed');
-    if(saved) tasks = JSON.parse(saved);
-    if(savedHistory) completedTasks = JSON.parse(savedHistory);
-    renderTasks();
+    const saved = localStorage.getItem('taskquick_tasks');
+    const savedHistory = localStorage.getItem('taskquick_completed');
+    if(saved) tasks = JSON.parse(saved);
+    if(savedHistory) completedTasks = JSON.parse(savedHistory);
+    renderTasks();
 }
 
 function saveStorage() {
-    localStorage.setItem('taskquick_tasks', JSON.stringify(tasks));
-    localStorage.setItem('taskquick_completed', JSON.stringify(completedTasks));
+    localStorage.setItem('taskquick_tasks', JSON.stringify(tasks));
+    localStorage.setItem('taskquick_completed', JSON.stringify(completedTasks));
 }
 
 // Calendar Logic
 function renderCal() {
-    const grid = document.getElementById("calGrid");
-    grid.innerHTML = "";
-    ['S','M','T','W','T','F','S'].forEach(d => grid.innerHTML += `<div class="day-name">${d}</div>`);
-    document.getElementById("monthYear").innerText = new Intl.DateTimeFormat('en-US', {month:'long', year:'numeric'}).format(curMonth);
-    
-    const first = new Date(curMonth.getFullYear(), curMonth.getMonth(), 1).getDay();
-    const last = new Date(curMonth.getFullYear(), curMonth.getMonth() + 1, 0).getDate();
-    const today = new Date(); today.setHours(0,0,0,0);
+    const grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+    ['S','M','T','W','T','F','S'].forEach(d => grid.innerHTML += `<div class="day-name">${d}</div>`);
+    document.getElementById("monthYear").innerText = new Intl.DateTimeFormat('en-US', {month:'long', year:'numeric'}).format(curMonth);
+    
+    const first = new Date(curMonth.getFullYear(), curMonth.getMonth(), 1).getDay();
+    const last = new Date(curMonth.getFullYear(), curMonth.getMonth() + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
 
-    for(let i=0; i<first; i++) grid.innerHTML += `<div></div>`;
-    for(let d=1; d<=last; d++) {
-        const dObj = new Date(curMonth.getFullYear(), curMonth.getMonth(), d);
-        const isPast = dObj < today;
-        const isSel = selDate && dObj.toDateString() === selDate.toDateString();
-        const dEl = document.createElement("div");
-        dEl.className = `day ${isPast ? 'disabled-day' : ''} ${isSel ? 'selected' : ''}`;
-        dEl.innerText = d;
-        if(!isPast) {
-            dEl.onclick = () => {
-                selDate = new Date(dObj); 
-                syncLock();
-                renderCal();
-            };
-        }
-        grid.appendChild(dEl);
-    }
+    for(let i=0; i<first; i++) grid.innerHTML += `<div></div>`;
+    for(let d=1; d<=last; d++) {
+        const dObj = new Date(curMonth.getFullYear(), curMonth.getMonth(), d);
+        const isPast = dObj < today;
+        const isSel = selDate && dObj.toDateString() === selDate.toDateString();
+        const dEl = document.createElement("div");
+        dEl.className = `day ${isPast ? 'disabled-day' : ''} ${isSel ? 'selected' : ''}`;
+        dEl.innerText = d;
+        if(!isPast) {
+            dEl.onclick = () => {
+                selDate = new Date(dObj); 
+                syncLock();
+                renderCal();
+            };
+        }
+        grid.appendChild(dEl);
+    }
 }
 function changeMonth(dir) { curMonth.setMonth(curMonth.getMonth() + dir); renderCal(); }
 function clearCal() { selDate = null; syncLock(); renderCal(); }
 
 // UI Lock
 function syncLock() {
-    const d = parseInt(document.getElementById("in-d").value)||0;
-    const h = parseInt(document.getElementById("in-h").value)||0;
-    const m = parseInt(document.getElementById("in-m").value)||0;
-    const s = parseInt(document.getElementById("in-s").value)||0;
-    const manualActive = (d+h+m+s) > 0;
+    const d = parseInt(document.getElementById("in-d").value)||0;
+    const h = parseInt(document.getElementById("in-h").value)||0;
+    const m = parseInt(document.getElementById("in-m").value)||0;
+    const s = parseInt(document.getElementById("in-s").value)||0;
+    const manualActive = (d+h+m+s) > 0;
 
-    if (selDate) {
-        document.getElementById("manSection").classList.add("disabled");
-        document.getElementById("calSection").classList.add("active");
-    } else if (manualActive) {
-        document.getElementById("calSection").classList.add("disabled");
-        document.getElementById("manSection").classList.add("active");
-    } else {
-        document.getElementById("calSection").classList.remove("disabled", "active");
-        document.getElementById("manSection").classList.remove("disabled", "active");
-    }
+    if (selDate) {
+        document.getElementById("manSection").classList.add("disabled");
+        document.getElementById("calSection").classList.add("active");
+    } else if (manualActive) {
+        document.getElementById("calSection").classList.add("disabled");
+        document.getElementById("manSection").classList.add("active");
+    } else {
+        document.getElementById("calSection").classList.remove("disabled", "active");
+        document.getElementById("manSection").classList.remove("disabled", "active");
+    }
 }
 
 function applyPreset() {
-    const val = document.getElementById("presets").value;
-    if(!val) return;
-    const p = val.split(':');
-    document.getElementById("in-d").value = p[0];
-    document.getElementById("in-h").value = p[1];
-    document.getElementById("in-m").value = p[2];
-    document.getElementById("in-s").value = p[3];
-    selDate = null;
-    syncLock();
-    renderCal();
+    const val = document.getElementById("presets").value;
+    if(!val) return;
+    const p = val.split(':');
+    document.getElementById("in-d").value = p[0];
+    document.getElementById("in-h").value = p[1];
+    document.getElementById("in-m").value = p[2];
+    document.getElementById("in-s").value = p[3];
+    selDate = null;
+    syncLock();
+    renderCal();
 }
 
 // Modal Handlers
 function openModal(id = null) {
-    document.getElementById("modal").style.display = "block";
-    document.getElementById("backdrop").style.display = "block";
-    selDate = null; 
-    document.getElementById("editId").value = id || "";
-    document.getElementById("title").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("in-d").value = 0;
-    document.getElementById("in-h").value = 0;
-    document.getElementById("in-m").value = 0;
-    document.getElementById("in-s").value = 0;
-    
-    if(id) {
-        const t = tasks.find(x => x.id === id);
-        document.getElementById("title").value = t.title;
-        document.getElementById("desc").value = t.desc;
-        document.getElementById("prioSelect").value = t.priority;
-        document.getElementById("loop").checked = t.loop;
-    }
-    syncLock();
-    renderCal();
+    document.getElementById("modal").style.display = "block";
+    document.getElementById("backdrop").style.display = "block";
+    selDate = null; 
+    document.getElementById("editId").value = id || "";
+    document.getElementById("title").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("in-d").value = 0;
+    document.getElementById("in-h").value = 0;
+    document.getElementById("in-m").value = 0;
+    document.getElementById("in-s").value = 0;
+    
+    if(id) {
+        const t = tasks.find(x => x.id === id);
+        document.getElementById("title").value = t.title;
+        document.getElementById("desc").value = t.desc;
+        document.getElementById("prioSelect").value = t.priority;
+        document.getElementById("loop").checked = t.loop;
+    }
+    syncLock();
+    renderCal();
 }
 
 function openHistory() {
-    document.getElementById("historyModal").style.display = "block";
-    document.getElementById("backdrop").style.display = "block";
-    renderHistory();
+    document.getElementById("historyModal").style.display = "block";
+    document.getElementById("backdrop").style.display = "block";
+    renderHistory();
 }
 
 function closeHistory() { document.getElementById("historyModal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
@@ -365,134 +365,134 @@ function closeModal() { document.getElementById("modal").style.display = "none";
 function closeAllModals() { closeModal(); closeHistory(); }
 
 function saveTask() {
-    const title = document.getElementById("title").value.trim();
-    if(!title) return alert("Title required");
+    const title = document.getElementById("title").value.trim();
+    if(!title) return alert("Title required");
 
-    let durationSecs = 0;
-    if(selDate) {
-        const t = document.getElementById("calTime").value.split(':');
-        selDate.setHours(t[0], t[1], 0);
-        durationSecs = Math.floor((selDate - new Date()) / 1000);
-    } else {
-        durationSecs = (parseInt(document.getElementById("in-d").value)||0)*86400 + (parseInt(document.getElementById("in-h").value)||0)*3600 + (parseInt(document.getElementById("in-m").value)||0)*60 + (parseInt(document.getElementById("in-s").value)||0);
-    }
+    let durationSecs = 0;
+    if(selDate) {
+        const t = document.getElementById("calTime").value.split(':');
+        selDate.setHours(t[0], t[1], 0);
+        durationSecs = Math.floor((selDate - new Date()) / 1000);
+    } else {
+        durationSecs = (parseInt(document.getElementById("in-d").value)||0)*86400 + (parseInt(document.getElementById("in-h").value)||0)*3600 + (parseInt(document.getElementById("in-m").value)||0)*60 + (parseInt(document.getElementById("in-s").value)||0);
+    }
 
-    if(durationSecs <= 0) return alert("Set a future time");
+    if(durationSecs <= 0) return alert("Set a future time");
 
-    const id = document.getElementById("editId").value || Date.now();
-    const newTask = {
-        id: parseInt(id), title, desc: document.getElementById("desc").value,
-        initial: durationSecs, target: Date.now() + (durationSecs * 1000),
-        priority: parseInt(ps.value), loop: document.getElementById("loop").checked
-    };
+    const id = document.getElementById("editId").value || Date.now();
+    const newTask = {
+        id: parseInt(id), title, desc: document.getElementById("desc").value,
+        initial: durationSecs, target: Date.now() + (durationSecs * 1000),
+        priority: parseInt(ps.value), loop: document.getElementById("loop").checked
+    };
 
-    const idx = tasks.findIndex(x => x.id == id);
-    if(idx > -1) tasks[idx] = newTask; else tasks.push(newTask);
-    
-    tasks.sort((a,b) => a.priority - b.priority);
-    saveStorage(); renderTasks(); closeModal();
+    const idx = tasks.findIndex(x => x.id == id);
+    if(idx > -1) tasks[idx] = newTask; else tasks.push(newTask);
+    
+    tasks.sort((a,b) => a.priority - b.priority);
+    saveStorage(); renderTasks(); closeModal();
 }
 
 function completeT(id) {
-    const idx = tasks.findIndex(x => x.id === id);
-    if(idx > -1) {
-        const task = tasks.splice(idx, 1)[0];
-        task.completedAt = new Date().toLocaleString();
-        completedTasks.unshift(task); // Add to top of history
-        saveStorage();
-        renderTasks();
-    }
+    const idx = tasks.findIndex(x => x.id === id);
+    if(idx > -1) {
+        const task = tasks.splice(idx, 1)[0];
+        task.completedAt = new Date().toLocaleString();
+        completedTasks.unshift(task); // Add to top of history
+        saveStorage();
+        renderTasks();
+    }
 }
 
 function renderTasks() {
-    const list = document.getElementById("taskList");
-    list.innerHTML = "";
-    document.getElementById("emptyState").style.display = tasks.length ? "none" : "block";
+    const list = document.getElementById("taskList");
+    list.innerHTML = "";
+    document.getElementById("emptyState").style.display = tasks.length ? "none" : "block";
 
-    tasks.forEach(t => {
-        const rem = Math.max(0, Math.floor((t.target - Date.now()) / 1000));
-        const color = `hsl(${((t.priority - 1) / 99) * 240}, 75%, 45%)`;
-        const d = Math.floor(rem/86400), h = Math.floor((rem%86400)/3600), m = Math.floor((rem%3600)/60), s = rem%60;
-        
-        const card = document.createElement("div");
-        card.className = "task-card";
-        card.style.borderLeftColor = color;
-        card.innerHTML = `
-            <div class="alert-overlay" style="display:${rem <= 0 ? 'flex' : 'none'}">
-                <h1>TIME'S UP!</h1>
-                <button onclick="resetT(${t.id})">RESET TIMER</button>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-                <div>
-                    <b style="font-size:1.4rem; color:${color}">${t.title}</b>
-                    <p style="color:#64748b; margin:8px 0; font-size:0.9rem;">${t.desc || '...'}</p>
-                    <span class="countdown-pill">${d}d ${h}h ${m}m ${s}s</span>
-                </div>
-                <div style="font-weight:900; color:${color}">P${t.priority}</div>
-            </div>
-            <div style="margin-top:15px; border-top:1px solid #eee; padding-top:12px; display:flex; gap:10px;">
-                <button onclick="completeT(${t.id})" style="border:none; background:#dcfce7; color:var(--success); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Complete</button>
-                <button onclick="openModal(${t.id})" style="border:none; background:#e0f2fe; color:var(--primary); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Edit</button>
-                <button onclick="deleteT(${t.id})" style="border:none; background:#fee2e2; color:var(--danger); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Delete</button>
-            </div>
-        `;
-        list.appendChild(card);
-    });
+    tasks.forEach(t => {
+        const rem = Math.max(0, Math.floor((t.target - Date.now()) / 1000));
+        const color = `hsl(${((t.priority - 1) / 99) * 240}, 75%, 45%)`;
+        const d = Math.floor(rem/86400), h = Math.floor((rem%86400)/3600), m = Math.floor((rem%3600)/60), s = rem%60;
+        
+        const card = document.createElement("div");
+        card.className = "task-card";
+        card.style.borderLeftColor = color;
+        card.innerHTML = `
+            <div class="alert-overlay" style="display:${rem <= 0 ? 'flex' : 'none'}">
+                <h1>TIME'S UP!</h1>
+                <button onclick="resetT(${t.id})">RESET TIMER</button>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <b style="font-size:1.4rem; color:${color}">${t.title}</b>
+                    <p style="color:#64748b; margin:8px 0; font-size:0.9rem;">${t.desc || '...'}</p>
+                    <span class="countdown-pill">${d}d ${h}h ${m}m ${s}s</span>
+                </div>
+                <div style="font-weight:900; color:${color}">P${t.priority}</div>
+            </div>
+            <div style="margin-top:15px; border-top:1px solid #eee; padding-top:12px; display:flex; gap:10px;">
+                <button onclick="completeT(${t.id})" style="border:none; background:#dcfce7; color:var(--success); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Complete</button>
+                <button onclick="openModal(${t.id})" style="border:none; background:#e0f2fe; color:var(--primary); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Edit</button>
+                <button onclick="deleteT(${t.id})" style="border:none; background:#fee2e2; color:var(--danger); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Delete</button>
+            </div>
+        `;
+        list.appendChild(card);
+    });
 }
 
 function renderHistory() {
-    const hList = document.getElementById("historyList");
-    hList.innerHTML = "";
-    if(completedTasks.length === 0) {
-        hList.innerHTML = `<p style="text-align:center; color:#94a3b8;">No tasks completed yet.</p>`;
-        return;
-    }
-    completedTasks.forEach(t => {
-        hList.innerHTML += `
-            <div class="history-item">
-                <div style="display:flex; justify-content:space-between; align-items:start;">
-                    <b style="color:var(--text-main)">${t.title}</b>
-                    <span style="font-size:0.65rem; color:#94a3b8; font-weight:bold;">${t.completedAt}</span>
-                </div>
-                <p style="font-size:0.8rem; color:#64748b; margin:5px 0;">${t.desc || 'No description provided'}</p>
-            </div>
-        `;
-    });
+    const hList = document.getElementById("historyList");
+    hList.innerHTML = "";
+    if(completedTasks.length === 0) {
+        hList.innerHTML = `<p style="text-align:center; color:#94a3b8;">No tasks completed yet.</p>`;
+        return;
+    }
+    completedTasks.forEach(t => {
+        hList.innerHTML += `
+            <div class="history-item">
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <b style="color:var(--text-main)">${t.title}</b>
+                    <span style="font-size:0.65rem; color:#94a3b8; font-weight:bold;">${t.completedAt}</span>
+                </div>
+                <p style="font-size:0.8rem; color:#64748b; margin:5px 0;">${t.desc || 'No description provided'}</p>
+            </div>
+        `;
+    });
 }
 
 function clearHistory() {
-    if(confirm("Wipe all task history?")) {
-        completedTasks = [];
-        saveStorage();
-        renderHistory();
-    }
+    if(confirm("Wipe all task history?")) {
+        completedTasks = [];
+        saveStorage();
+        renderHistory();
+    }
 }
 
 function resetT(id) {
-    const t = tasks.find(x => x.id === id);
-    if(t) {
-        t.target = Date.now() + (t.initial * 1000);
-        saveStorage(); renderTasks();
-    }
+    const t = tasks.find(x => x.id === id);
+    if(t) {
+        t.target = Date.now() + (t.initial * 1000);
+        saveStorage(); renderTasks();
+    }
 }
 
 function deleteT(id) {
-    if(confirm("Delete task?")) {
-        tasks = tasks.filter(x => x.id !== id);
-        saveStorage(); renderTasks();
-    }
+    if(confirm("Delete task?")) {
+        tasks = tasks.filter(x => x.id !== id);
+        saveStorage(); renderTasks();
+    }
 }
 
 // Update Loop
 setInterval(() => {
-    tasks.forEach(t => {
-        const rem = t.target - Date.now();
-        if(rem <= 0 && rem > -1000) { 
-            if("Notification" in window && Notification.permission === "granted") new Notification("Time up: " + t.title);
-            if(t.loop) setTimeout(() => resetT(t.id), 2000);
-        }
-    });
-    if(tasks.length) renderTasks();
+    tasks.forEach(t => {
+        const rem = t.target - Date.now();
+        if(rem <= 0 && rem > -1000) { 
+            if("Notification" in window && Notification.permission === "granted") new Notification("Time up: " + t.title);
+            if(t.loop) setTimeout(() => resetT(t.id), 2000);
+        }
+    });
+    if(tasks.length) renderTasks();
 }, 1000);
 
 // BG Canvas
@@ -500,19 +500,19 @@ const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let balls = [];
 function initBg() {
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    balls = [];
-    for (let i = 0; i < 15; i++) balls.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, r: Math.random()*40+10 });
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    balls = [];
+    for (let i = 0; i < 15; i++) balls.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, r: Math.random()*40+10 });
 }
 function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    balls.forEach(b => {
-        b.x += b.vx; b.y += b.vy;
-        if (b.x<0 || b.x>canvas.width) b.vx*=-1;
-        if (b.y<0 || b.y>canvas.height) b.vy*=-1;
-        ctx.beginPath(); ctx.fillStyle = "rgba(74, 159, 214, 0.08)"; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-    });
-    requestAnimationFrame(draw);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    balls.forEach(b => {
+        b.x += b.vx; b.y += b.vy;
+        if (b.x<0 || b.x>canvas.width) b.vx*=-1;
+        if (b.y<0 || b.y>canvas.height) b.vy*=-1;
+        ctx.beginPath(); ctx.fillStyle = "rgba(74, 159, 214, 0.08)"; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(draw);
 }
 window.addEventListener("resize", initBg);
 initBg(); draw();
