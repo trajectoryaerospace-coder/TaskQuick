@@ -36,15 +36,18 @@ canvas {
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     text-align: center; padding: 40px;
 }
-#lockScreen h1 { color: var(--primary); font-size: 2rem; margin-bottom: 10px; }
-#lockScreen p { color: #64748b; margin-bottom: 30px; line-height: 1.5; }
+#lockScreen h1 { color: var(--primary); font-size: 2.2rem; margin-bottom: 10px; font-weight: 900; }
+#lockScreen p { color: #64748b; margin-bottom: 30px; line-height: 1.6; font-size: 1.1rem; }
 .btn-auth { 
-    background: var(--primary); color: white; border: none; padding: 20px 40px; 
-    border-radius: 50px; font-weight: 800; font-size: 1.1rem; cursor: pointer;
-    box-shadow: 0 10px 20px rgba(74, 159, 214, 0.3);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white; border: none; padding: 22px 45px; 
+    border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
+    box-shadow: 0 15px 30px rgba(74, 159, 214, 0.4);
+    transition: transform 0.2s;
 }
+.btn-auth:active { transform: scale(0.95); }
 
-/* ===== NAVIGATION & UI ===== */
+/* ===== UI ELEMENTS ===== */
 .top-nav {
   position: fixed; top: 12px; left: 12px; right: 12px; height: 75px;
   background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
@@ -70,9 +73,7 @@ canvas {
   background: white; border: 2px solid #e2e8f0;
   display: flex; justify-content: center; align-items: center;
   cursor: pointer; z-index: 30; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  transition: 0.25s;
 }
-.history-button:hover { transform: scale(1.1); background: #f8fafc; }
 .history-button svg { width: 32px; height: 32px; fill: #64748b; }
 
 .empty-hint {
@@ -80,7 +81,7 @@ canvas {
   text-align: center; color: #cbd5e1; z-index: 5; pointer-events: none;
 }
 
-/* ===== MODAL ===== */
+/* ===== MODALS ===== */
 #backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,0.45);
   backdrop-filter: blur(12px); display: none; z-index: 50;
@@ -121,7 +122,7 @@ textarea { height: 80px; resize: none; }
 .time-box input { text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 4px; }
 .time-box span { font-size: 0.6rem; color: #94a3b8; font-weight: bold; }
 
-/* ===== CARDS & ALERT ===== */
+/* ===== TASK CARDS ===== */
 #taskList {
   position: fixed; top: 115px; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: 800px; padding: 0 20px 150px;
@@ -142,7 +143,7 @@ textarea { height: 80px; resize: none; }
 }
 @keyframes alertPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 
-.alert-overlay h1 { font-size: 2.2rem; margin: 0; font-weight: 900; letter-spacing: 2px; }
+.alert-overlay h1 { font-size: 2.2rem; margin: 0; font-weight: 900; }
 .alert-overlay button { 
     margin-top: 15px; padding: 12px 35px; border-radius: 50px; 
     border: none; background: white; color: var(--danger); font-weight: 900; cursor: pointer;
@@ -164,9 +165,9 @@ textarea { height: 80px; resize: none; }
 <body>
 
 <div id="lockScreen">
-    <h1>System Access</h1>
-    <p>To use TaskQuick Apex and receive real-time task alerts,<br>please enable notifications.</p>
-    <button class="btn-auth" onclick="requestAccess()">ENABLE SYSTEM ALERTS</button>
+    <h1>Initialization Required</h1>
+    <p>TaskQuick Apex needs system permission<br>to fire task alerts on this device.</p>
+    <button class="btn-auth" onclick="initSystem()">ACTIVATE APEX ENGINE</button>
 </div>
 
 <canvas id="bg"></canvas>
@@ -262,26 +263,74 @@ let tasks = [];
 let completedTasks = [];
 let curMonth = new Date();
 let selDate = null;
+let swRegistration = null;
 
-// Initial Permission Check
+// --- SERVICE WORKER INJECTION ---
+// This creates a "virtual" file for mobile notifications to work correctly
+const swCode = `
+self.addEventListener('push', (event) => {
+    const data = event.data.json();
+    self.registration.showNotification(data.title, { body: data.body });
+});
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(clients.openWindow('/'));
+});
+`;
+
+async function initSystem() {
+    try {
+        // 1. Request Permission
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+            alert("Notification permission is REQUIRED for this app to function.");
+            return;
+        }
+
+        // 2. Register Service Worker (Mobile Necessity)
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            swRegistration = await navigator.serviceWorker.register(url);
+            console.log("APEX Engine Ready");
+        }
+
+        // 3. Unlock App
+        document.getElementById('lockScreen').style.display = 'none';
+        triggerNotification("Apex System Active", "You will now receive task alerts.");
+        
+    } catch (err) {
+        console.error(err);
+        alert("System Init Failed. Ensure you are using HTTPS or Localhost.");
+    }
+}
+
+// Function to actually fire the notification using the SW
+function triggerNotification(title, body) {
+    if (swRegistration && swRegistration.active) {
+        swRegistration.showNotification(title, {
+            body: body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/1001/1001371.png',
+            vibrate: [200, 100, 200],
+            tag: 'task-alert'
+        });
+    } else {
+        // Fallback for desktop if SW isn't ready
+        new Notification(title, { body });
+    }
+}
+
+// Check status on load
 window.onload = () => {
     if (Notification.permission === "granted") {
-        document.getElementById('lockScreen').style.display = 'none';
+        // Even if granted, we still need to register the SW for mobile background support
+        initSystem(); 
     }
     loadStorage();
 };
 
-async function requestAccess() {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-        document.getElementById('lockScreen').style.display = 'none';
-        new Notification("TaskQuick Apex", { body: "Notifications Enabled Successfully!" });
-    } else {
-        alert("Permission denied. You cannot use the app without enabling notifications.");
-    }
-}
+// --- DATA LOGIC ---
 
-// Populate Priority Dropdown
 const ps = document.getElementById("prioSelect");
 for(let i=1; i<=100; i++) {
     let o = document.createElement("option"); o.value = i; o.innerText = "Priority " + i;
@@ -307,11 +356,9 @@ function renderCal() {
     grid.innerHTML = "";
     ['S','M','T','W','T','F','S'].forEach(d => grid.innerHTML += `<div class="day-name">${d}</div>`);
     document.getElementById("monthYear").innerText = new Intl.DateTimeFormat('en-US', {month:'long', year:'numeric'}).format(curMonth);
-    
     const first = new Date(curMonth.getFullYear(), curMonth.getMonth(), 1).getDay();
     const last = new Date(curMonth.getFullYear(), curMonth.getMonth() + 1, 0).getDate();
     const today = new Date(); today.setHours(0,0,0,0);
-
     for(let i=0; i<first; i++) grid.innerHTML += `<div></div>`;
     for(let d=1; d<=last; d++) {
         const dObj = new Date(curMonth.getFullYear(), curMonth.getMonth(), d);
@@ -321,11 +368,7 @@ function renderCal() {
         dEl.className = `day ${isPast ? 'disabled-day' : ''} ${isSel ? 'selected' : ''}`;
         dEl.innerText = d;
         if(!isPast) {
-            dEl.onclick = () => {
-                selDate = new Date(dObj); 
-                syncLock();
-                renderCal();
-            };
+            dEl.onclick = () => { selDate = new Date(dObj); syncLock(); renderCal(); };
         }
         grid.appendChild(dEl);
     }
@@ -334,12 +377,9 @@ function changeMonth(dir) { curMonth.setMonth(curMonth.getMonth() + dir); render
 function clearCal() { selDate = null; syncLock(); renderCal(); }
 
 function syncLock() {
-    const d = parseInt(document.getElementById("in-d").value)||0;
-    const h = parseInt(document.getElementById("in-h").value)||0;
-    const m = parseInt(document.getElementById("in-m").value)||0;
-    const s = parseInt(document.getElementById("in-s").value)||0;
+    const d = parseInt(document.getElementById("in-d").value)||0, h = parseInt(document.getElementById("in-h").value)||0;
+    const m = parseInt(document.getElementById("in-m").value)||0, s = parseInt(document.getElementById("in-s").value)||0;
     const manualActive = (d+h+m+s) > 0;
-
     if (selDate) {
         document.getElementById("manSection").classList.add("disabled");
         document.getElementById("calSection").classList.add("active");
@@ -353,30 +393,20 @@ function syncLock() {
 }
 
 function applyPreset() {
-    const val = document.getElementById("presets").value;
-    if(!val) return;
+    const val = document.getElementById("presets").value; if(!val) return;
     const p = val.split(':');
-    document.getElementById("in-d").value = p[0];
-    document.getElementById("in-h").value = p[1];
-    document.getElementById("in-m").value = p[2];
-    document.getElementById("in-s").value = p[3];
-    selDate = null;
-    syncLock();
-    renderCal();
+    document.getElementById("in-d").value = p[0]; document.getElementById("in-h").value = p[1];
+    document.getElementById("in-m").value = p[2]; document.getElementById("in-s").value = p[3];
+    selDate = null; syncLock(); renderCal();
 }
 
 function openModal(id = null) {
     document.getElementById("modal").style.display = "block";
     document.getElementById("backdrop").style.display = "block";
-    selDate = null; 
-    document.getElementById("editId").value = id || "";
-    document.getElementById("title").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("in-d").value = 0;
-    document.getElementById("in-h").value = 0;
-    document.getElementById("in-m").value = 0;
-    document.getElementById("in-s").value = 0;
-    
+    selDate = null; document.getElementById("editId").value = id || "";
+    document.getElementById("title").value = ""; document.getElementById("desc").value = "";
+    document.getElementById("in-d").value = 0; document.getElementById("in-h").value = 0;
+    document.getElementById("in-m").value = 0; document.getElementById("in-s").value = 0;
     if(id) {
         const t = tasks.find(x => x.id === id);
         document.getElementById("title").value = t.title;
@@ -384,8 +414,7 @@ function openModal(id = null) {
         document.getElementById("prioSelect").value = t.priority;
         document.getElementById("loop").checked = t.loop;
     }
-    syncLock();
-    renderCal();
+    syncLock(); renderCal();
 }
 
 function openHistory() {
@@ -393,7 +422,6 @@ function openHistory() {
     document.getElementById("backdrop").style.display = "block";
     renderHistory();
 }
-
 function closeHistory() { document.getElementById("historyModal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
 function closeModal() { document.getElementById("modal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
 function closeAllModals() { closeModal(); closeHistory(); }
@@ -401,7 +429,6 @@ function closeAllModals() { closeModal(); closeHistory(); }
 function saveTask() {
     const title = document.getElementById("title").value.trim();
     if(!title) return alert("Title required");
-
     let durationSecs = 0;
     if(selDate) {
         const t = document.getElementById("calTime").value.split(':');
@@ -410,19 +437,15 @@ function saveTask() {
     } else {
         durationSecs = (parseInt(document.getElementById("in-d").value)||0)*86400 + (parseInt(document.getElementById("in-h").value)||0)*3600 + (parseInt(document.getElementById("in-m").value)||0)*60 + (parseInt(document.getElementById("in-s").value)||0);
     }
-
     if(durationSecs <= 0) return alert("Set a future time");
-
     const id = document.getElementById("editId").value || Date.now();
     const newTask = {
         id: parseInt(id), title, desc: document.getElementById("desc").value,
         initial: durationSecs, target: Date.now() + (durationSecs * 1000),
         priority: parseInt(ps.value), loop: document.getElementById("loop").checked
     };
-
     const idx = tasks.findIndex(x => x.id == id);
     if(idx > -1) tasks[idx] = newTask; else tasks.push(newTask);
-    
     tasks.sort((a,b) => a.priority - b.priority);
     saveStorage(); renderTasks(); closeModal();
 }
@@ -433,23 +456,18 @@ function completeT(id) {
         const task = tasks.splice(idx, 1)[0];
         task.completedAt = new Date().toLocaleString();
         completedTasks.unshift(task);
-        saveStorage();
-        renderTasks();
+        saveStorage(); renderTasks();
     }
 }
 
 function renderTasks() {
-    const list = document.getElementById("taskList");
-    list.innerHTML = "";
+    const list = document.getElementById("taskList"); list.innerHTML = "";
     document.getElementById("emptyState").style.display = tasks.length ? "none" : "block";
-
     tasks.forEach(t => {
         const rem = Math.max(0, Math.floor((t.target - Date.now()) / 1000));
         const color = `hsl(${((t.priority - 1) / 99) * 240}, 75%, 45%)`;
         const d = Math.floor(rem/86400), h = Math.floor((rem%86400)/3600), m = Math.floor((rem%3600)/60), s = rem%60;
-        
-        const card = document.createElement("div");
-        card.className = "task-card";
+        const card = document.createElement("div"); card.className = "task-card";
         card.style.borderLeftColor = color;
         card.innerHTML = `
             <div class="alert-overlay" style="display:${rem <= 0 ? 'flex' : 'none'}">
@@ -475,12 +493,8 @@ function renderTasks() {
 }
 
 function renderHistory() {
-    const hList = document.getElementById("historyList");
-    hList.innerHTML = "";
-    if(completedTasks.length === 0) {
-        hList.innerHTML = `<p style="text-align:center; color:#94a3b8;">No tasks completed yet.</p>`;
-        return;
-    }
+    const hList = document.getElementById("historyList"); hList.innerHTML = "";
+    if(completedTasks.length === 0) { hList.innerHTML = `<p style="text-align:center; color:#94a3b8;">No tasks completed yet.</p>`; return; }
     completedTasks.forEach(t => {
         hList.innerHTML += `
             <div class="history-item">
@@ -494,46 +508,24 @@ function renderHistory() {
     });
 }
 
-function clearHistory() {
-    if(confirm("Wipe all task history?")) {
-        completedTasks = [];
-        saveStorage();
-        renderHistory();
-    }
-}
+function clearHistory() { if(confirm("Wipe all task history?")) { completedTasks = []; saveStorage(); renderHistory(); } }
 
 function resetT(id) {
     const t = tasks.find(x => x.id === id);
-    if(t) {
-        t.target = Date.now() + (t.initial * 1000);
-        saveStorage(); renderTasks();
-    }
+    if(t) { t.target = Date.now() + (t.initial * 1000); saveStorage(); renderTasks(); }
 }
 
 function deleteT(id) {
-    if(confirm("Delete task?")) {
-        tasks = tasks.filter(x => x.id !== id);
-        saveStorage(); renderTasks();
-    }
+    if(confirm("Delete task?")) { tasks = tasks.filter(x => x.id !== id); saveStorage(); renderTasks(); }
 }
 
 // Update Loop
 setInterval(() => {
-    let changed = false;
     tasks.forEach(t => {
         const rem = t.target - Date.now();
-        // Check for transition to 0
         if(rem <= 0 && rem > -1000) { 
-            // Fire Notification
-            if (Notification.permission === "granted") {
-                new Notification("Task Completed: " + t.title, {
-                    body: t.desc || "Timer has reached zero.",
-                    icon: "https://cdn-icons-png.flaticon.com/512/1001/1001371.png"
-                });
-            }
-            if(t.loop) {
-                setTimeout(() => resetT(t.id), 2000);
-            }
+            triggerNotification("TIME UP: " + t.title, t.desc || "A scheduled task has reached its target time.");
+            if(t.loop) setTimeout(() => resetT(t.id), 2000);
         }
     });
     if(tasks.length) renderTasks();
