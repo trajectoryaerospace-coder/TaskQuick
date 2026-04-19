@@ -1,164 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TaskQuick - Perpetual Apex</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>TaskQuick - Perpetual Apex</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TaskQuick">
 
-<style>
-:root {
-  --primary: #4a9fd6;
-  --primary-light: #7ed3ff;
-  --danger: #ff4757;
-  --success: #2ed573;
-  --bg-color: #f5f7fb;
-  --text-main: #1e293b;
-}
+    <style>
+        :root {
+            --primary: #4a9fd6;
+            --primary-light: #7ed3ff;
+            --danger: #ff4757;
+            --success: #2ed573;
+            --bg-color: #f5f7fb;
+            --text-main: #1e293b;
+        }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--bg-color);
-  color: var(--text-main);
-  overflow-x: hidden;
-}
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-canvas {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
+        canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
 
-/* ===== NAVIGATION & UI ===== */
-.top-nav {
-  position: fixed; top: 12px; left: 12px; right: 12px; height: 75px;
-  background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
-  border-radius: 22px; display: flex; align-items: center;
-  padding: 0 30px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-}
-.top-nav b { font-size: 1.6rem; color: #2c5f7a; letter-spacing: -1px; }
+        /* ===== NAVIGATION & UI ===== */
+        .top-nav {
+            position: fixed; top: 12px; left: 12px; right: 12px; height: 75px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
+            border-radius: 22px; display: flex; align-items: center;
+            padding: 0 20px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .top-nav b { font-size: 1.4rem; color: #2c5f7a; letter-spacing: -1px; flex-grow: 1; }
 
-.add-button {
-  position: fixed; bottom: 35px; right: 35px;
-  width: 75px; height: 75px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  display: flex; justify-content: center; align-items: center;
-  cursor: pointer; z-index: 30; box-shadow: 0 12px 30px rgba(74, 159, 214, 0.4);
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.add-button svg { width: 36px; height: 36px; fill: white; }
-.add-button:hover { transform: scale(1.1) rotate(90deg); }
+        .notif-toggle {
+            background: #f1f5f9; border: none; padding: 10px; border-radius: 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .notif-toggle.active { background: #dcfce7; }
+        .notif-toggle svg { width: 22px; height: 22px; fill: #64748b; }
+        .notif-toggle.active svg { fill: var(--success); }
 
-.history-button {
-  position: fixed; bottom: 35px; left: 35px;
-  width: 75px; height: 75px; border-radius: 50%;
-  background: white; border: 2px solid #e2e8f0;
-  display: flex; justify-content: center; align-items: center;
-  cursor: pointer; z-index: 30; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  transition: 0.25s;
-}
-.history-button:hover { transform: scale(1.1); background: #f8fafc; }
-.history-button svg { width: 32px; height: 32px; fill: #64748b; }
+        .add-button {
+            position: fixed; bottom: 35px; right: 35px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 30; box-shadow: 0 12px 30px rgba(74, 159, 214, 0.4);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .add-button svg { width: 32px; height: 32px; fill: white; }
+        .add-button:hover { transform: scale(1.1) rotate(90deg); }
 
-.empty-hint {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; color: #cbd5e1; z-index: 5; pointer-events: none;
-}
+        .history-button {
+            position: fixed; bottom: 35px; left: 35px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: white; border: 2px solid #e2e8f0;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 30; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.25s;
+        }
+        .history-button svg { width: 28px; height: 28px; fill: #64748b; }
 
-/* ===== MODAL ===== */
-#backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(12px); display: none; z-index: 50;
-}
-.modal {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 92vw; max-width: 600px; max-height: 88vh; overflow-y: auto;
-  background: white; border-radius: 35px; padding: 35px; display: none; z-index: 100;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-}
+        .empty-hint {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; color: #cbd5e1; z-index: 5; pointer-events: none; width: 80%;
+        }
 
-.section-box {
-    padding: 20px; border-radius: 24px; border: 2px solid transparent;
-    background: #f8fafc; margin-bottom: 20px; transition: 0.3s;
-}
-.section-box.active { border-color: var(--primary); background: #fff; box-shadow: 0 10px 30px rgba(74, 159, 214, 0.1); }
-.section-box.disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+        /* ===== MODAL ===== */
+        #backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(12px); display: none; z-index: 50;
+        }
+        .modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90vw; max-width: 500px; max-height: 85vh; overflow-y: auto;
+            background: white; border-radius: 30px; padding: 25px; display: none; z-index: 100;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+        }
 
-/* Calendar */
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
-.day { padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 0.85rem; }
-.day:hover:not(.disabled-day) { background: #e0f2fe; color: var(--primary); }
-.day.selected { background: var(--primary) !important; color: white !important; font-weight: bold; }
-.day.today { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
-.day.disabled-day { color: #cbd5e1; cursor: not-allowed; }
-.day-name { font-size: 0.7rem; color: #94a3b8; font-weight: 800; text-align: center; }
+        .section-box {
+            padding: 15px; border-radius: 20px; border: 2px solid transparent;
+            background: #f8fafc; margin-bottom: 15px; transition: 0.3s;
+        }
+        .section-box.active { border-color: var(--primary); background: #fff; box-shadow: 0 10px 30px rgba(74, 159, 214, 0.1); }
+        .section-box.disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
 
-/* Inputs */
-label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-input, textarea, select { 
-    width: 100%; padding: 14px; margin-bottom: 18px; border-radius: 14px; 
-    border: 1px solid #e2e8f0; background: #fcfdfe; font-size: 14px; box-sizing: border-box; 
-}
-textarea { height: 80px; resize: none; }
+        /* Calendar */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+        .day { padding: 8px; border-radius: 10px; text-align: center; cursor: pointer; font-size: 0.8rem; }
+        .day:hover:not(.disabled-day) { background: #e0f2fe; color: var(--primary); }
+        .day.selected { background: var(--primary) !important; color: white !important; font-weight: bold; }
+        .day.today { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
+        .day.disabled-day { color: #cbd5e1; cursor: not-allowed; }
+        .day-name { font-size: 0.65rem; color: #94a3b8; font-weight: 800; text-align: center; }
 
-.segmented-time { display: flex; gap: 10px; }
-.time-box { flex: 1; text-align: center; }
-.time-box input { text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 4px; }
-.time-box span { font-size: 0.6rem; color: #94a3b8; font-weight: bold; }
+        /* Inputs */
+        label { display: block; font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
+        input, textarea, select { 
+            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; 
+            border: 1px solid #e2e8f0; background: #fcfdfe; font-size: 14px; box-sizing: border-box; 
+        }
+        textarea { height: 60px; resize: none; }
 
-/* ===== CARDS & ALERT ===== */
-#taskList {
-  position: fixed; top: 115px; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 800px; padding: 0 20px 150px;
-  display: flex; flex-direction: column; gap: 20px; z-index: 10;
-  overflow-y: auto; height: calc(100vh - 130px);
-}
-.task-card {
-  position: relative; background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
-  border-radius: 28px; padding: 28px; border-left: 12px solid var(--primary);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-}
+        .segmented-time { display: flex; gap: 8px; }
+        .time-box { flex: 1; text-align: center; }
+        .time-box input { text-align: center; font-weight: bold; font-size: 1rem; margin-bottom: 2px; padding: 8px; }
+        .time-box span { font-size: 0.55rem; color: #94a3b8; font-weight: bold; }
 
-.alert-overlay {
-  position: absolute; inset: 0; background: rgba(255, 71, 87, 0.98);
-  border-radius: 24px; display: none; flex-direction: column;
-  justify-content: center; align-items: center; z-index: 10;
-  color: white; text-align: center; animation: alertPulse 1.5s infinite;
-}
-@keyframes alertPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        /* ===== CARDS ===== */
+        #taskList {
+            position: fixed; top: 105px; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 600px; padding: 0 15px 120px;
+            display: flex; flex-direction: column; gap: 15px; z-index: 10;
+            overflow-y: auto; height: calc(100vh - 110px);
+        }
+        .task-card {
+            position: relative; background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
+            border-radius: 24px; padding: 20px; border-left: 10px solid var(--primary);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
 
-.alert-overlay h1 { font-size: 2.2rem; margin: 0; font-weight: 900; letter-spacing: 2px; }
-.alert-overlay button { 
-    margin-top: 15px; padding: 12px 35px; border-radius: 50px; 
-    border: none; background: white; color: var(--danger); font-weight: 900; cursor: pointer;
-}
+        .alert-overlay {
+            position: absolute; inset: 0; background: rgba(255, 71, 87, 0.98);
+            border-radius: 20px; display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 10;
+            color: white; text-align: center; animation: alertPulse 1.5s infinite;
+        }
+        @keyframes alertPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.01); } }
 
-.countdown-pill {
-    background: #f1f5f9; padding: 8px 15px; border-radius: 12px;
-    font-family: 'Courier New', monospace; font-weight: 800; color: #1e293b;
-}
+        .alert-overlay h2 { font-size: 1.5rem; margin: 0; font-weight: 900; }
+        .alert-overlay button { 
+            margin-top: 10px; padding: 10px 25px; border-radius: 50px; 
+            border: none; background: white; color: var(--danger); font-weight: 900; cursor: pointer;
+        }
 
-.btn-row { display: flex; gap: 12px; margin-top: 15px; }
-.btn-main { flex: 1; padding: 18px; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; }
-.btn-save { background: var(--primary); color: white; }
+        .countdown-pill {
+            display: inline-block; background: #f1f5f9; padding: 6px 12px; border-radius: 10px;
+            font-family: 'Courier New', monospace; font-weight: 800; color: #1e293b; font-size: 0.9rem;
+        }
 
-.history-item {
-    border-bottom: 1px solid #f1f5f9; padding: 15px 0;
-}
-.history-item:last-child { border-bottom: none; }
-</style>
+        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-main { flex: 1; padding: 15px; border: none; border-radius: 15px; cursor: pointer; font-weight: 800; }
+        .btn-save { background: var(--primary); color: white; }
+
+        .history-item { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
+    </style>
 </head>
 <body>
 
 <canvas id="bg"></canvas>
 
 <div class="top-nav">
-  <div><b>TaskQuick</b> Apex</div>
+    <b>TaskQuick<span>Apex</span></b>
+    <button id="notifBtn" class="notif-toggle" onclick="requestNotifPermission()">
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    </button>
 </div>
 
 <div id="emptyState" class="empty-hint">
     <h2>Ready to plan?</h2>
-    <p>Hit the + button to schedule a task</p>
+    <p>Hit + to schedule a task.<br>iOS: Add to Home Screen for Alerts.</p>
 </div>
 
 <div class="history-button" onclick="openHistory()">
@@ -173,68 +186,62 @@ textarea { height: 80px; resize: none; }
 <div id="backdrop" onclick="closeAllModals()"></div>
 
 <div class="modal" id="modal">
-  <h2 style="margin-top:0">Schedule Task</h2>
-  <input type="hidden" id="editId">
-  
-  <label>Title</label>
-  <input id="title" placeholder="Task Name">
+    <h2 style="margin-top:0">Schedule Task</h2>
+    <input type="hidden" id="editId">
+    
+    <label>Title</label>
+    <input id="title" placeholder="Task Name">
 
-  <label>Description</label>
-  <textarea id="desc" placeholder="Details..."></textarea>
+    <label>Description</label>
+    <textarea id="desc" placeholder="Details..."></textarea>
 
-  <div class="section-box" id="calSection">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label style="margin:0">Option 1: Calendar Date</label>
-          <button onclick="clearCal()" style="font-size:0.6rem; cursor:pointer;">Reset Cal</button>
-      </div>
-      <div style="display:flex; justify-content:space-between; margin-top:15px; align-items:center;">
-          <button onclick="changeMonth(-1)" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">❮</button>
-          <b id="monthYear"></b>
-          <button onclick="changeMonth(1)" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">❯</button>
-      </div>
-      <div class="cal-grid" id="calGrid"></div>
-      <div style="margin-top:15px; display:flex; align-items:center; gap:10px;">
-          <label style="margin:0">At Time:</label>
-          <input type="time" id="calTime" value="12:00" style="margin:0; width:130px;">
-      </div>
-  </div>
+    <div class="section-box" id="calSection">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="margin:0">Option 1: Calendar</label>
+            <button onclick="clearCal()" style="font-size:0.6rem; cursor:pointer; border:none; background:#eee; padding:4px 8px; border-radius:4px;">Reset</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
+            <button onclick="changeMonth(-1)" style="border:none; background:none; cursor:pointer;">❮</button>
+            <b id="monthYear" style="font-size:0.9rem"></b>
+            <button onclick="changeMonth(1)" style="border:none; background:none; cursor:pointer;">❯</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+            <label style="margin:0">Time:</label>
+            <input type="time" id="calTime" value="12:00" style="margin:0; width:110px;">
+        </div>
+    </div>
 
-  <div class="section-box" id="manSection">
-      <label>Option 2: Manual Duration</label>
-      <div class="segmented-time">
-          <div class="time-box"><input type="number" id="in-d" value="0" oninput="syncLock()"><span>DAYS</span></div>
-          <div class="time-box"><input type="number" id="in-h" value="0" oninput="syncLock()"><span>HRS</span></div>
-          <div class="time-box"><input type="number" id="in-m" value="0" oninput="syncLock()"><span>MINS</span></div>
-          <div class="time-box"><input type="number" id="in-s" value="0" oninput="syncLock()"><span>SECS</span></div>
-      </div>
-      <select id="presets" onchange="applyPreset()" style="margin-top:15px; margin-bottom:0;">
-          <option value="">Presets</option>
-          <option value="0:0:1:0">1 Minute</option>
-          <option value="0:0:10:0">10 Minutes</option>
-          <option value="0:1:0:0">1 Hour</option>
-      </select>
-  </div>
+    <div class="section-box" id="manSection">
+        <label>Option 2: Manual Timer</label>
+        <div class="segmented-time">
+            <div class="time-box"><input type="number" id="in-d" value="0" oninput="syncLock()"><span>DAYS</span></div>
+            <div class="time-box"><input type="number" id="in-h" value="0" oninput="syncLock()"><span>HRS</span></div>
+            <div class="time-box"><input type="number" id="in-m" value="0" oninput="syncLock()"><span>MINS</span></div>
+            <div class="time-box"><input type="number" id="in-s" value="0" oninput="syncLock()"><span>SECS</span></div>
+        </div>
+    </div>
 
-  <label>Priority (1-100)</label>
-  <select id="prioSelect"></select>
+    <label>Priority</label>
+    <select id="prioSelect"></select>
 
-  <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-      <input type="checkbox" id="loop" style="width:20px; height:20px; margin:0; cursor:pointer;">
-      <label for="loop" style="margin:0; cursor:pointer;">Repeat Task Loop</label>
-  </div>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+        <input type="checkbox" id="loop" style="width:18px; height:18px; margin:0;">
+        <label for="loop" style="margin:0;">Repeat Automatically</label>
+    </div>
 
-  <div class="btn-row">
-    <button class="btn-main" style="background:#f1f5f9;" onclick="closeModal()">Cancel</button>
-    <button class="btn-main btn-save" onclick="saveTask()">Save Task</button>
-  </div>
+    <div class="btn-row">
+        <button class="btn-main" style="background:#f1f5f9;" onclick="closeModal()">Cancel</button>
+        <button class="btn-main btn-save" onclick="saveTask()">Save Task</button>
+    </div>
 </div>
 
 <div class="modal" id="historyModal">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="margin:0">Completed Tasks</h2>
-        <button onclick="clearHistory()" style="font-size:0.7rem; border:none; background:#fee2e2; color:var(--danger); padding:5px 10px; border-radius:8px; cursor:pointer;">Clear All</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2 style="margin:0">History</h2>
+        <button onclick="clearHistory()" style="font-size:0.6rem; border:none; background:#fee2e2; color:var(--danger); padding:5px 10px; border-radius:8px;">Wipe</button>
     </div>
-    <div id="historyList" style="max-height:50vh; overflow-y:auto; margin-bottom:20px;"></div>
+    <div id="historyList" style="max-height:45vh; overflow-y:auto; margin-bottom:15px;"></div>
     <button class="btn-main" style="background:#f1f5f9; width:100%;" onclick="closeHistory()">Close</button>
 </div>
 
@@ -244,28 +251,64 @@ let completedTasks = [];
 let curMonth = new Date();
 let selDate = null;
 
-// Populate Priority Dropdown
+// Service Worker for Mobile Notifications
+async function registerSW() {
+    if ('serviceWorker' in navigator) {
+        const swBlob = new Blob([`
+            self.addEventListener('install', (e) => self.skipWaiting());
+            self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+            self.addEventListener('notificationclick', (e) => {
+                e.notification.close();
+                e.waitUntil(clients.openWindow('/'));
+            });
+        `], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+        try { await navigator.serviceWorker.register(swUrl); } catch(e) { console.error("SW fail", e); }
+    }
+}
+
+async function requestNotifPermission() {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+        document.getElementById("notifBtn").classList.add("active");
+        registerSW();
+    } else {
+        alert("Enable notifications in settings to get task alerts.");
+    }
+}
+
+function triggerNotification(title, body) {
+    if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(title, {
+                body: body,
+                vibrate: [200, 100, 200],
+                tag: 'task-alert'
+            });
+        });
+    }
+}
+
+// Priority Dropdown
 const ps = document.getElementById("prioSelect");
 for(let i=1; i<=100; i++) {
     let o = document.createElement("option"); o.value = i; o.innerText = "Priority " + i;
     ps.appendChild(o);
 }
 
-// Load from LocalStorage
 function loadStorage() {
-    const saved = localStorage.getItem('taskquick_tasks');
-    const savedHistory = localStorage.getItem('taskquick_completed');
-    if(saved) tasks = JSON.parse(saved);
-    if(savedHistory) completedTasks = JSON.parse(savedHistory);
+    tasks = JSON.parse(localStorage.getItem('tq_tasks') || "[]");
+    completedTasks = JSON.parse(localStorage.getItem('tq_history') || "[]");
+    if (Notification.permission === "granted") document.getElementById("notifBtn").classList.add("active");
     renderTasks();
 }
 
 function saveStorage() {
-    localStorage.setItem('taskquick_tasks', JSON.stringify(tasks));
-    localStorage.setItem('taskquick_completed', JSON.stringify(completedTasks));
+    localStorage.setItem('tq_tasks', JSON.stringify(tasks));
+    localStorage.setItem('tq_history', JSON.stringify(completedTasks));
 }
 
-// Calendar Logic
+// Calendar
 function renderCal() {
     const grid = document.getElementById("calGrid");
     grid.innerHTML = "";
@@ -285,11 +328,7 @@ function renderCal() {
         dEl.className = `day ${isPast ? 'disabled-day' : ''} ${isSel ? 'selected' : ''}`;
         dEl.innerText = d;
         if(!isPast) {
-            dEl.onclick = () => {
-                selDate = new Date(dObj); 
-                syncLock();
-                renderCal();
-            };
+            dEl.onclick = () => { selDate = new Date(dObj); syncLock(); renderCal(); };
         }
         grid.appendChild(dEl);
     }
@@ -297,44 +336,17 @@ function renderCal() {
 function changeMonth(dir) { curMonth.setMonth(curMonth.getMonth() + dir); renderCal(); }
 function clearCal() { selDate = null; syncLock(); renderCal(); }
 
-// UI Lock
 function syncLock() {
-    const d = parseInt(document.getElementById("in-d").value)||0;
-    const h = parseInt(document.getElementById("in-h").value)||0;
-    const m = parseInt(document.getElementById("in-m").value)||0;
-    const s = parseInt(document.getElementById("in-s").value)||0;
-    const manualActive = (d+h+m+s) > 0;
-
-    if (selDate) {
-        document.getElementById("manSection").classList.add("disabled");
-        document.getElementById("calSection").classList.add("active");
-    } else if (manualActive) {
-        document.getElementById("calSection").classList.add("disabled");
-        document.getElementById("manSection").classList.add("active");
-    } else {
-        document.getElementById("calSection").classList.remove("disabled", "active");
-        document.getElementById("manSection").classList.remove("disabled", "active");
-    }
-}
-
-function applyPreset() {
-    const val = document.getElementById("presets").value;
-    if(!val) return;
-    const p = val.split(':');
-    document.getElementById("in-d").value = p[0];
-    document.getElementById("in-h").value = p[1];
-    document.getElementById("in-m").value = p[2];
-    document.getElementById("in-s").value = p[3];
-    selDate = null;
-    syncLock();
-    renderCal();
+    const hasManual = (parseInt(document.getElementById("in-d").value)||0) + (parseInt(document.getElementById("in-h").value)||0) + (parseInt(document.getElementById("in-m").value)||0) + (parseInt(document.getElementById("in-s").value)||0) > 0;
+    document.getElementById("manSection").className = selDate ? "section-box disabled" : (hasManual ? "section-box active" : "section-box");
+    document.getElementById("calSection").className = hasManual ? "section-box disabled" : (selDate ? "section-box active" : "section-box");
 }
 
 // Modal Handlers
 function openModal(id = null) {
     document.getElementById("modal").style.display = "block";
     document.getElementById("backdrop").style.display = "block";
-    selDate = null; 
+    selDate = null;
     document.getElementById("editId").value = id || "";
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
@@ -350,58 +362,36 @@ function openModal(id = null) {
         document.getElementById("prioSelect").value = t.priority;
         document.getElementById("loop").checked = t.loop;
     }
-    syncLock();
-    renderCal();
+    syncLock(); renderCal();
 }
-
-function openHistory() {
-    document.getElementById("historyModal").style.display = "block";
-    document.getElementById("backdrop").style.display = "block";
-    renderHistory();
-}
-
-function closeHistory() { document.getElementById("historyModal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
-function closeModal() { document.getElementById("modal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
-function closeAllModals() { closeModal(); closeHistory(); }
 
 function saveTask() {
     const title = document.getElementById("title").value.trim();
     if(!title) return alert("Title required");
 
-    let durationSecs = 0;
+    let dur = 0;
     if(selDate) {
         const t = document.getElementById("calTime").value.split(':');
         selDate.setHours(t[0], t[1], 0);
-        durationSecs = Math.floor((selDate - new Date()) / 1000);
+        dur = Math.floor((selDate - new Date()) / 1000);
     } else {
-        durationSecs = (parseInt(document.getElementById("in-d").value)||0)*86400 + (parseInt(document.getElementById("in-h").value)||0)*3600 + (parseInt(document.getElementById("in-m").value)||0)*60 + (parseInt(document.getElementById("in-s").value)||0);
+        dur = (parseInt(document.getElementById("in-d").value)||0)*86400 + (parseInt(document.getElementById("in-h").value)||0)*3600 + (parseInt(document.getElementById("in-m").value)||0)*60 + (parseInt(document.getElementById("in-s").value)||0);
     }
 
-    if(durationSecs <= 0) return alert("Set a future time");
+    if(dur <= 0) return alert("Select a future time");
 
-    const id = document.getElementById("editId").value || Date.now();
+    const id = parseInt(document.getElementById("editId").value) || Date.now();
     const newTask = {
-        id: parseInt(id), title, desc: document.getElementById("desc").value,
-        initial: durationSecs, target: Date.now() + (durationSecs * 1000),
+        id, title, desc: document.getElementById("desc").value,
+        initial: dur, target: Date.now() + (dur * 1000),
         priority: parseInt(ps.value), loop: document.getElementById("loop").checked
     };
 
-    const idx = tasks.findIndex(x => x.id == id);
+    const idx = tasks.findIndex(x => x.id === id);
     if(idx > -1) tasks[idx] = newTask; else tasks.push(newTask);
     
     tasks.sort((a,b) => a.priority - b.priority);
-    saveStorage(); renderTasks(); closeModal();
-}
-
-function completeT(id) {
-    const idx = tasks.findIndex(x => x.id === id);
-    if(idx > -1) {
-        const task = tasks.splice(idx, 1)[0];
-        task.completedAt = new Date().toLocaleString();
-        completedTasks.unshift(task); // Add to top of history
-        saveStorage();
-        renderTasks();
-    }
+    saveStorage(); renderTasks(); closeAllModals();
 }
 
 function renderTasks() {
@@ -411,98 +401,92 @@ function renderTasks() {
 
     tasks.forEach(t => {
         const rem = Math.max(0, Math.floor((t.target - Date.now()) / 1000));
-        const color = `hsl(${((t.priority - 1) / 99) * 240}, 75%, 45%)`;
+        const color = `hsl(${((t.priority - 1) / 99) * 200}, 70%, 45%)`;
         const d = Math.floor(rem/86400), h = Math.floor((rem%86400)/3600), m = Math.floor((rem%3600)/60), s = rem%60;
         
         const card = document.createElement("div");
         card.className = "task-card";
         card.style.borderLeftColor = color;
         card.innerHTML = `
-            <div class="alert-overlay" style="display:${rem <= 0 ? 'flex' : 'none'}">
-                <h1>TIME'S UP!</h1>
-                <button onclick="resetT(${t.id})">RESET TIMER</button>
+            <div class="alert-overlay" id="alert-${t.id}" style="display:${rem <= 0 ? 'flex' : 'none'}">
+                <h2>TIME'S UP!</h2>
+                <button onclick="resetT(${t.id})">RESTART</button>
             </div>
             <div style="display:flex; justify-content:space-between;">
-                <div>
-                    <b style="font-size:1.4rem; color:${color}">${t.title}</b>
-                    <p style="color:#64748b; margin:8px 0; font-size:0.9rem;">${t.desc || '...'}</p>
+                <div style="flex:1">
+                    <b style="font-size:1.2rem; color:${color}">${t.title}</b>
+                    <p style="color:#64748b; margin:5px 0; font-size:0.85rem; line-height:1.2;">${t.desc || '...'}</p>
                     <span class="countdown-pill">${d}d ${h}h ${m}m ${s}s</span>
                 </div>
-                <div style="font-weight:900; color:${color}">P${t.priority}</div>
+                <div style="font-weight:900; color:${color}; margin-left:10px;">P${t.priority}</div>
             </div>
-            <div style="margin-top:15px; border-top:1px solid #eee; padding-top:12px; display:flex; gap:10px;">
-                <button onclick="completeT(${t.id})" style="border:none; background:#dcfce7; color:var(--success); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Complete</button>
-                <button onclick="openModal(${t.id})" style="border:none; background:#e0f2fe; color:var(--primary); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Edit</button>
-                <button onclick="deleteT(${t.id})" style="border:none; background:#fee2e2; color:var(--danger); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">Delete</button>
+            <div style="margin-top:12px; border-top:1px solid #eee; padding-top:10px; display:flex; gap:8px;">
+                <button onclick="completeT(${t.id})" style="border:none; background:#dcfce7; color:var(--success); padding:6px 10px; border-radius:8px; font-weight:bold; font-size:0.8rem;">Done</button>
+                <button onclick="openModal(${t.id})" style="border:none; background:#e0f2fe; color:var(--primary); padding:6px 10px; border-radius:8px; font-weight:bold; font-size:0.8rem;">Edit</button>
+                <button onclick="deleteT(${t.id})" style="border:none; background:#fee2e2; color:var(--danger); padding:6px 10px; border-radius:8px; font-weight:bold; font-size:0.8rem;">Del</button>
             </div>
         `;
         list.appendChild(card);
     });
 }
 
-function renderHistory() {
-    const hList = document.getElementById("historyList");
-    hList.innerHTML = "";
-    if(completedTasks.length === 0) {
-        hList.innerHTML = `<p style="text-align:center; color:#94a3b8;">No tasks completed yet.</p>`;
-        return;
-    }
-    completedTasks.forEach(t => {
-        hList.innerHTML += `
-            <div class="history-item">
-                <div style="display:flex; justify-content:space-between; align-items:start;">
-                    <b style="color:var(--text-main)">${t.title}</b>
-                    <span style="font-size:0.65rem; color:#94a3b8; font-weight:bold;">${t.completedAt}</span>
-                </div>
-                <p style="font-size:0.8rem; color:#64748b; margin:5px 0;">${t.desc || 'No description provided'}</p>
-            </div>
-        `;
-    });
-}
-
-function clearHistory() {
-    if(confirm("Wipe all task history?")) {
-        completedTasks = [];
-        saveStorage();
-        renderHistory();
+// Logic Actions
+function completeT(id) {
+    const idx = tasks.findIndex(x => x.id === id);
+    if(idx > -1) {
+        const t = tasks.splice(idx, 1)[0];
+        t.completedAt = new Date().toLocaleString();
+        completedTasks.unshift(t);
+        saveStorage(); renderTasks();
     }
 }
 
 function resetT(id) {
     const t = tasks.find(x => x.id === id);
-    if(t) {
-        t.target = Date.now() + (t.initial * 1000);
-        saveStorage(); renderTasks();
-    }
+    if(t) { t.target = Date.now() + (t.initial * 1000); saveStorage(); renderTasks(); }
 }
 
 function deleteT(id) {
-    if(confirm("Delete task?")) {
-        tasks = tasks.filter(x => x.id !== id);
-        saveStorage(); renderTasks();
-    }
+    if(confirm("Delete?")) { tasks = tasks.filter(x => x.id !== id); saveStorage(); renderTasks(); }
 }
 
-// Update Loop
+function openHistory() { document.getElementById("historyModal").style.display = "block"; document.getElementById("backdrop").style.display = "block"; renderHistory(); }
+function closeHistory() { document.getElementById("historyModal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
+function closeModal() { document.getElementById("modal").style.display = "none"; document.getElementById("backdrop").style.display = "none"; }
+function closeAllModals() { closeModal(); closeHistory(); }
+
+function renderHistory() {
+    const hList = document.getElementById("historyList");
+    hList.innerHTML = completedTasks.length ? "" : `<p style="text-align:center; color:#94a3b8;">No history yet.</p>`;
+    completedTasks.forEach(t => {
+        hList.innerHTML += `<div class="history-item"><b>${t.title}</b><br><small style="color:#94a3b8">${t.completedAt}</small></div>`;
+    });
+}
+
+function clearHistory() { if(confirm("Clear?")) { completedTasks = []; saveStorage(); renderHistory(); } }
+
+// The Heartbeat Loop
 setInterval(() => {
+    let changed = false;
     tasks.forEach(t => {
         const rem = t.target - Date.now();
         if(rem <= 0 && rem > -1000) { 
-            if("Notification" in window && Notification.permission === "granted") new Notification("Time up: " + t.title);
+            triggerNotification("Time's Up!", t.title);
             if(t.loop) setTimeout(() => resetT(t.id), 2000);
+            changed = true;
         }
     });
-    if(tasks.length) renderTasks();
+    renderTasks();
 }, 1000);
 
-// BG Canvas
+// Animated Background
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let balls = [];
 function initBg() {
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     balls = [];
-    for (let i = 0; i < 15; i++) balls.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, r: Math.random()*40+10 });
+    for (let i = 0; i < 12; i++) balls.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4, r: Math.random()*30+10 });
 }
 function draw() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -510,13 +494,12 @@ function draw() {
         b.x += b.vx; b.y += b.vy;
         if (b.x<0 || b.x>canvas.width) b.vx*=-1;
         if (b.y<0 || b.y>canvas.height) b.vy*=-1;
-        ctx.beginPath(); ctx.fillStyle = "rgba(74, 159, 214, 0.08)"; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.fillStyle = "rgba(74, 159, 214, 0.06)"; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
     });
     requestAnimationFrame(draw);
 }
 window.addEventListener("resize", initBg);
-initBg(); draw();
-loadStorage();
+initBg(); draw(); loadStorage();
 </script>
 </body>
 </html>
